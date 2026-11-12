@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tangram — Universo dos Números</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0a1020;color:#eef4ff;font:16px system-ui}header,main{max-width:1120px;margin:auto;padding:22px}header{padding-top:36px}h1{font-size:clamp(30px,6vw,58px);margin:8px 0;letter-spacing:-.04em}h2{margin:0 0 10px}p{color:#bac9df;line-height:1.55}.brand{color:#f3ce84;font-weight:700}nav,.tools{display:flex;gap:8px;flex-wrap:wrap}button{cursor:pointer;border:1px solid #41557a;border-radius:10px;padding:10px 14px;background:#15233f;color:inherit;font:inherit}button[aria-current=true],button[aria-pressed=true]{background:#f3ce84;color:#17223c}button:focus-visible,input:focus-visible{outline:2px solid #70dbef;outline-offset:3px}.lab{display:grid;grid-template-columns:minmax(0,2fr) minmax(245px,1fr);gap:16px}.card{border:1px solid #304365;border-radius:18px;padding:16px;background:#101b31}label{display:block;margin:12px 0}input[type=range]{width:100%;accent-color:#f3ce84}canvas{display:block;width:100%;height:clamp(300px,48vw,480px);background:#080f1f;border-radius:12px}.legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:12px}.ref{color:#75d9ef}.current{color:#f3ce84}table{width:100%;border-collapse:collapse;text-align:right;font-variant-numeric:tabular-nums}th,td{padding:7px;border-bottom:1px solid #304365}iframe{width:100%;height:78vh;border:1px solid #304365;border-radius:16px}[hidden]{display:none!important}@media(max-width:680px){.lab{grid-template-columns:1fr}header,main{padding:14px}}
+
+.feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.feature{border:1px solid #344568;border-radius:20px;overflow:hidden;background:#101b31}.feature canvas{height:clamp(190px,26vw,300px);border-radius:0}.feature-copy{padding:20px}.feature-copy p{margin:0 0 16px}.feature-copy button{background:#f3ce84;color:#17223c;font-weight:700}.feature.waves button{background:#9ce7f2}.feature h2{font-size:clamp(23px,3vw,34px)}@media(max-width:620px){.feature-grid{grid-template-columns:1fr}}
+
+.feature.graph{grid-column:1/-1}.feature-copy{padding:12px 16px}.feature h2{margin:0 0 8px;font-size:clamp(20px,2.8vw,27px)}.feature h2 span{font:italic 1.2em Georgia,serif;color:#f3ce84;margin-right:.28em}.waves h2 span{color:#9ce7f2}.graph h2 span{color:#aabfff}.feature-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px}.feature-actions label{margin:0;color:#bfcde2;font-size:13px}.feature-actions input{color:#fff;background:#080f1f;border:1px solid #53678a;border-radius:8px;padding:8px;font:16px ui-monospace,monospace;width:6ch}.feature-actions input[type=text]{width:min(15ch,46vw)}.feature-actions button{margin-left:auto;padding:8px 12px;font-size:14px}.formula-text{font:italic 16px Georgia,serif;color:#d5e5ff}.feature canvas{height:clamp(200px,28vw,345px);background:radial-gradient(ellipse at 50% 50%,#172644,#080f1f 75%)}.graph canvas{height:clamp(190px,24vw,285px)}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}@media(max-width:620px){header{padding-bottom:3px}nav button{font-size:13px;padding:8px 10px}.feature canvas{height:clamp(180px,51vw,260px)}}
+.feature-copy{padding:9px 13px}.feature h2{font-size:clamp(17px,2.4vw,23px);margin-bottom:5px}.feature-actions label,.formula-text{font-size:12px}.feature-actions button{min-height:42px}.lab p{font-size:13px}@media(max-width:620px){.feature canvas{height:clamp(195px,55vw,290px)}}</style><link rel="stylesheet" href="titulos.css"><link rel="stylesheet" href="familia.css"><link rel="stylesheet" href="identidade/logo.css"><link rel="icon" href="identidade/favicon.png" type="image/png"><link rel="apple-touch-icon" href="identidade/apple-touch-icon.png"><link rel="stylesheet" href="galeria.css"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0a1020"></head><body>
+<header><div class="family-brand"><div class="family-wordmark">
+  <h1><span class="family-name">Tangram Educativo</span> <span class="family-product"><span aria-hidden="true">/</span> Universo dos Números</span></h1>
+  <p class="family-author">Professor João Faustino Júnior</p></div>
+  <img class="family-emblem" src="identidade/escultura.webp" width="64" height="64" alt="">
+</div>
+<nav aria-label="Laboratórios"><button data-view="inicio">Início</button><button data-view="dna">DNA</button><button data-view="formas">Ondas</button><button data-view="grafico">Gráficos</button></nav><div class="app-actions"><button type="button" id="install-app">Instalar</button><button type="button" id="share-app">Compartilhar</button></div><p id="app-status" role="status"></p></header>
+<main><section id="inicio" class="feature-grid" aria-label="Experiências em destaque">
+<article class="feature"><canvas id="dnaPreview" role="img" aria-label="Escultura da sequência"></canvas><div class="feature-copy"><h2><span aria-hidden="true">φ</span> DNA Matemático</h2><div class="feature-actions"><label><span class="sr-only">Sequência</span><input id="homeSeed" type="text" inputmode="numeric" pattern="[0-9]+" maxlength="32" value="314159265"></label><button data-open="dna">Explorar <span aria-hidden="true">↗</span></button></div></div></article>
+<article class="feature waves"><canvas id="wavePreview" role="img" aria-label="Superfície da onda"></canvas><div class="feature-copy"><h2><span aria-hidden="true">λ</span> Ondas 3D</h2><div class="feature-actions"><label><span aria-hidden="true">α</span><span class="sr-only">Amplitude</span> <input id="homeAmplitude" type="number" min="0" max="3" step=".1" value="1"></label><span class="formula-text">z = α sen(x) cos(y)</span><button data-open="formas">Explorar <span aria-hidden="true">↗</span></button></div></div></article>
+<article class="feature graph"><canvas id="graphPreview" role="img" aria-label="Gráfico da função quadrática"></canvas><div class="feature-copy"><h2><span aria-hidden="true">Δ</span> Gráficos 2D</h2><div class="feature-actions"><span id="homeEquation" class="formula-text"></span><label>a <input data-coefficient="a" type="number" min="-3" max="3" step=".5"></label><label>b <input data-coefficient="b" type="number" min="-8" max="8" step=".5"></label><label>c <input data-coefficient="c" type="number" min="-12" max="12" step=".5"></label><button data-open="grafico">Explorar <span aria-hidden="true">↗</span></button></div></div></article>
+</section><section id="grafico" class="lab" hidden>
+<div class="card"><h2>Laboratório de Equações 2D</h2><p>Compare a função de referência com <strong>y = ax² + bx + c</strong>. O que acontece com as raízes quando você altera apenas c?</p>
+<canvas id="plot" role="img" aria-label="Gráfico cartesiano das duas funções"></canvas>
+<div class="legend"><span class="ref">┄ Referência y = x²</span><strong class="current" id="equation"></strong></div></div>
+<div class="card"><h2>Coeficientes</h2>
+<label>a <output id="aVal"></output><input id="a" type="range" min="-3" max="3" step=".5"></label>
+<label>b <output id="bVal"></output><input id="b" type="range" min="-8" max="8" step=".5"></label>
+<label>c <output id="cVal"></output><input id="c" type="range" min="-12" max="12" step=".5"></label>
+<div class="tools"><button id="example">Usar x² − 4</button><button id="rootsToggle" aria-pressed="true">Marcar raízes</button></div>
+<label>Equações sugeridas <select id="graphPreset">
+<option value="">Escolher</option>
+<option value="1,0,-4">Parábola · y = x² − 4</option>
+<option value="-1,2,3">Arco · y = −x² + 2x + 3</option>
+<option value="1,-4,4">Raiz dupla · y = (x − 2)²</option>
+<option value="0,2,-1">Reta · y = 2x − 1</option>
+</select></label><p id="roots" aria-live="polite"></p>
+<table><caption>Tabela de valores</caption><thead><tr><th scope="col">x</th><th scope="col">x²</th><th scope="col">y</th></tr></thead><tbody id="values"></tbody></table>
+</div></section>
+<section id="dna" hidden><iframe title="DNA Matemático — Metamorfose V8" src="dna.html"></iframe></section>
+<section id="formas" hidden><iframe title="Superfícies 3D, Fibonacci e fractais" src="formas.html"></iframe></section>
+</main>
+<script src="dna-model.js"></script><script src="laboratorio.js"></script><script src="pwa.js"></script></body></html>

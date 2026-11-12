@@ -1,0 +1,11 @@
+.family-brand {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+}
+.family-emblem {
+  width: clamp(50px, 9vw, 74px);
+  height: auto;
+  flex: none;
+}

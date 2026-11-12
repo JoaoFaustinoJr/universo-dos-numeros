@@ -1,0 +1,32 @@
+.family-brand {
+  padding-bottom: 17px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #53616a;
+}
+
+.family-brand h1 {
+  margin: 0;
+  color: #89bad6;
+  font: 400 clamp(19px, 4.1vw, 36px)/1.22 Georgia, serif;
+  letter-spacing: .035em;
+  text-transform: uppercase;
+}
+
+.family-name {
+  color: #f3c783;
+}
+
+.family-product {
+  display: inline-block;
+}
+
+.family-author {
+  margin: 8px 0 0;
+  color: #b1cadb;
+  font-size: clamp(14px, 2.6vw, 19px);
+  line-height: 1.35;
+}
+
+@media (max-width: 480px) {
+  .family-product { display: block; }
+}

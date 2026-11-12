@@ -1,0 +1,133 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DNA Matemático — Metamorfose V8</title><style>*{box-sizing:border-box}body{margin:0;background:#080c1c;color:#f5f2ff;font:16px system-ui}main{max-width:820px;margin:auto;padding:14px}.tag{color:#f7cb7c;font-size:12px;letter-spacing:.14em;font-weight:800}h1{font-size:clamp(26px,6vw,38px);margin:9px 0}p{color:#bfcce9;line-height:1.55}.panel{background:#111c37;border:1px solid #41527d;border-radius:22px;padding:16px;margin:15px 0}label{display:block;margin:9px 0;color:#e5eafa}input[type=text]{width:100%;background:#081228;color:#fff;border:1px solid #6478a5;border-radius:12px;padding:13px;font:inherit}button{font:inherit;padding:12px 15px;border:1px solid #5b729e;border-radius:12px;background:#263c65;color:white;cursor:pointer}button:disabled{opacity:.45}.primary{background:linear-gradient(120deg,#ffe1a1,#e8a74d);color:#18243b;font-weight:800;border:0}.row{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}canvas{display:block;width:100%;height:min(72vw,490px);min-height:320px;border-radius:16px;touch-action:none;background:#081024}.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat div{background:#213357;padding:12px 5px;text-align:center;border-radius:13px}.stat b{font-size:23px;color:#ffd88e}.stat small{display:block;color:#cbd7ef}.hint{font-size:13px}.line{display:flex;justify-content:space-between;gap:10px;align-items:center}input[type=range]{width:100%;accent-color:#ffc56d}.explain{background:#0a142b;padding:14px;border-radius:12px;line-height:1.65;color:#e5ecff}#status{color:#ffe0a0;font-weight:700}@media(max-width:550px){main{padding:9px}.panel{padding:13px}button{padding:11px}}.inspection{align-items:center;gap:8px;font-size:13px}.inspection select{color:#f4e8c9;background:#101b31;border:1px solid #526488;border-radius:8px;padding:7px}.inspection input{width:90px;flex:1;min-width:65px}.hint{font-size:12px}#xray[aria-pressed="true"]{border-color:#c9a86a;color:#f5dfaa}.challenge{margin:12px 0}.challenge summary{cursor:pointer;color:#f3ce84}.challenge fieldset{border:1px solid #344568;border-radius:8px;margin:10px 0}.challenge label{display:inline-block;margin-right:12px}.challenge p{font-size:13px}.challenge [hidden]{display:none}</style><link rel="stylesheet" href="titulos.css"></head><body><main><div class="tag">TANGRAM EDUCATIVO · UNIVERSO DOS NÚMEROS</div><h1>DNA Matemático <span style="color:#f7c677">Metamorfose</span></h1><p>Troque apenas um algarismo. Veja a escultura original transformar-se continuamente em outra — sem desaparecer.</p><section class="panel"><label for="seed">Sequência da obra</label><input id="seed" type="text" inputmode="numeric" value="123456789"><div class="row"><button class="primary" id="create">✦ Materializar</button><button id="change">✎ Mudar um dígito</button><button id="reverse">↶ Desfazer</button></div><div class="row"><button data-seed="55555555555555">Todos 5</button><button data-seed="123456789">1 a 9</button><button data-seed="987654321">9 a 1</button></div><div class="line"><span class="tag">ESCULTURA VIVA · ARRASTE PARA GIRAR</span><span id="status">Pronta</span></div><details class="panel challenge">
+<summary>Desafio · A ordem muda a forma?</summary>
+<p>Compare <b>314159265</b> e <b>562951413</b>. Os algarismos são os mesmos, em ordem inversa.</p>
+<fieldset><legend>Qual é a sua previsão para a escultura?</legend>
+<label><input type="radio" name="prediction" value="same"> Fica igual</label>
+<label><input type="radio" name="prediction" value="different"> Muda</label>
+</fieldset>
+<div class="row"><button id="challenge-run" type="button" disabled>Testar previsão</button><button id="challenge-before" type="button" hidden>Ver original</button><button id="challenge-after" type="button" hidden>Ver invertida</button></div>
+<p id="challenge-result" role="status"></p>
+</details>
+<canvas id="scene" aria-label="Escultura matemática interativa"></canvas>
+<div class="row inspection"><button id="xray" type="button" aria-pressed="true">Raio-X</button><label for="zoom">Ampliação</label><input id="zoom" type="range" min="1" max="7" step=".25" value="1"><output id="zoomValue">1×</output></div><p id="inspectionDetail" class="hint" aria-live="polite"></p><div class="line"><label for="morph">Transformação</label><output id="percent">100%</output></div><input type="range" id="morph" min="0" max="100" value="100"><div class="row"><button id="play" class="primary">▶ Repetir transformação</button><button id="reset">↺ Visão geral</button><button id="png">↓ Salvar PNG</button></div><p class="hint">Arraste para girar. Amplie para revelar os dígitos ao longo da malha. O controle de transformação permite comparar qualquer etapa da mudança.</p><div class="stat"><div><b id="lobes">—</b><small>frequência</small></div><div><b id="layers">—</b><small>camadas</small></div><div><b id="sum">—</b><small>soma</small></div></div></section><section class="panel"><div class="tag">RAI EXPLICA · MATEMÁTICA DA MUDANÇA</div><h2 id="heading">A forma tem uma regra</h2><div class="explain" id="explain">Cada dígito contribui para a geometria. Observe o que muda ao alterar somente um deles.</div><p class="hint" id="ids"></p></section></main><script src="dna-model.js"></script><script>(()=>{'use strict';const $=id=>document.getElementById(id),cv=$('scene'),ctx=cv.getContext('2d'),TAU=Math.PI*2;let zoom=1,xray=true,probe=null,visibleDigits=[];let forming=false,changed=-1;const reducedMotion=matchMedia("(prefers-reduced-motion: reduce)");let old=null,now=null,t=1,raf=0,rot=.35,tilt=.6,down=null;const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));function mix(a,b,t){return{x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t,z:a.z+(b.z-a.z)*t}}function proj(p,w,h,scale=zoom){let x=p.x*Math.cos(rot)-p.y*Math.sin(rot),y=p.x*Math.sin(rot)+p.y*Math.cos(rot),yy=y*Math.cos(tilt)-p.z*Math.sin(tilt),zz=y*Math.sin(tilt)+p.z*Math.cos(tilt);const k=Math.min(w,h)*.32*scale/(1+zz*.12);return{x:w/2+x*k,y:h/2-yy*k,depth:zz}}function draw(){if(!now)return;const w=cv.clientWidth,h=cv.clientHeight;if(!w||!h)return;ctx.clearRect(0,0,w,h);let bg=ctx.createRadialGradient(w*.5,h*.48,2,w*.5,h*.48,w*.65);bg.addColorStop(0,'#1b3256');bg.addColorStop(1,'#070b1c');ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);const a=old||now,b=now,N=14;
+visibleDigits=[];
+const sample=(layer,u)=>proj(mix(point(a,layer,u),point(b,layer,u),t),w,h);
+for(let l=0;l<N;l++){const reveal=forming&&!old?clamp(t*1.6-l/N*.6,0,1):1;ctx.globalAlpha=reveal;let s=l/(N-1);ctx.beginPath();for(let j=0;j<=540;j++){const u=TAU*j/540,p=sample(s,u);j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y)}const hue=(a.h%360)*(1-t)+(b.h%360)*t+l*10;ctx.strokeStyle=`hsla(${hue},95%,${59+l%4*6}%,.83)`;ctx.lineWidth=1.5;ctx.shadowColor=`hsla(${hue},95%,70%,.5)`;ctx.shadowBlur=4;ctx.stroke();ctx.shadowBlur=0}ctx.globalAlpha=1;if(forming)drawDigits(w,h);if(xray&&zoom>=2.5&&!forming){
+  const digits=(t<.5?a:b).ds;
+  const count=Math.max(24,digits.length);
+  const points=[];
+  for(let layer=0;layer<7;layer++){
+    for(let i=0;i<count;i++){
+      const u=TAU*(i+layer*.37)/count;
+      const p=sample((layer*2)/13,u);
+      if(p.x<10||p.y<10||p.x>w-10||p.y>h-10)continue;
+      points.push({...p,u,index:(layer*count+i)%digits.length,value:digits[(layer*count+i)%digits.length]});
+    }
+  }
+  ctx.save();
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  for(const p of points.sort((a,b)=>a.depth-b.depth)){
+    if(visibleDigits.some(other=>Math.hypot(p.x-other.x,p.y-other.y)<19))continue;
+    visibleDigits.push(p);
+  }
+  for(const p of visibleDigits.reverse()){
+    const near=clamp(.55-p.depth*.27,.25,1);
+    ctx.globalAlpha=near*clamp((zoom-2.4)/1.3,.15,1);
+    ctx.fillStyle=p.index%2?'#dbe6f3':'#f6d78e';
+    ctx.font='600 '+Math.round(9+near*5)+'px monospace';
+    ctx.fillText(p.value,p.x,p.y);
+  }
+  ctx.restore();
+}}
+function refreshInspection(){
+  $('xray').setAttribute('aria-pressed',String(xray));
+  $('zoomValue').textContent=zoom.toLocaleString('pt-BR')+'×';
+  $('inspectionDetail').textContent=probe
+    ? 'Dígito '+probe.value+' · posição '+(probe.index+1)+' da sequência · parâmetro '+Math.round(probe.u*360/TAU)+'°'
+    : xray&&zoom>=2.5?'Toque em um dígito para ver sua posição e o ângulo do filamento.':xray?'Amplie para revelar os dígitos dentro da malha.':'Raio-X desativado.';
+}
+$('xray').onclick=()=>{xray=!xray;probe=null;refreshInspection();draw();saveDNA()};
+$('zoom').oninput=()=>{zoom=+$('zoom').value;probe=null;refreshInspection();draw();saveDNA()};
+const particles=Array.from({length:66},(_,digit)=>({
+  delay:Math.random()*.68,angle:Math.random()*TAU,spin:2.8+Math.random()*5,
+  depth:Math.random()**1.55,digit,side:Math.random()*2-1
+})).sort((a,b)=>a.depth-b.depth);
+function drawDigits(w,h){
+  ctx.save();
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  for(const {delay,angle,spin,depth,digit,side} of particles){
+    const age=(t-delay)/(1-delay)*1.14;
+    if(age<=0||age>=1)continue;
+    const turn=angle+age*spin;
+    const radius=(1-age)**1.18;
+    const x=w/2+Math.cos(turn)*radius*w*.67;
+    const y=h/2+Math.sin(turn)*radius*h*.62+side*radius*19;
+    const index=digit%now.ds.length;
+    const highlight=index===changed;
+    const size=6+depth*12+(highlight?2:0);
+    ctx.font=(highlight?'700 ':'500 ')+Math.round(size)+'px monospace';
+    ctx.globalAlpha=Math.min(1,age*9,(1-age)*4)*(.08+depth*.34);
+    ctx.fillStyle=highlight||side>0?'#ffe096':'#dbe6f3';
+    ctx.strokeStyle=ctx.fillStyle;
+    ctx.beginPath();
+    ctx.moveTo(x+Math.cos(turn-.3)*size*.42,y+Math.sin(turn-.3)*size*.42);
+    ctx.lineTo(x,y);
+    ctx.stroke();
+    ctx.fillText(now.ds[index],x,y);
+  }
+  ctx.restore();
+}
+function update(){if(!now)return;$('lobes').textContent=now.freq;$('layers').textContent=now.layers;$('sum').textContent=now.sum;$('ids').textContent=`Obra atual: ${now.h.toString(16).toUpperCase().padStart(8,'0')} · ${now.raw}`;$('heading').textContent=old?'Dois códigos, duas geometrias':'Uma sequência, uma escultura';$('explain').textContent=old?`A obra anterior (${old.raw}) tinha frequência ${old.freq} e ${old.layers} camadas. A nova (${now.raw}) tem frequência ${now.freq} e ${now.layers} camadas. O programa interpola as coordenadas 3D correspondentes entre as duas obras. A mudança é contínua, mesmo quando as quantidades de lóbulos diferem. Esta é uma regra de arte generativa criada para o laboratório.`:`A sequência ${now.raw} produz uma escultura por funções trigonométricas. A ordem dos algarismos participa do cálculo da fase, da frequência, das ondulações e da altura. Não é uma propriedade mística dos números, mas uma regra matemática reproduzível.`;refreshInspection();draw()}function setT(v){t=clamp(v,0,1);$('morph').value=Math.round(t*100);$('percent').textContent=Math.round(t*100)+'%';draw()}function animate(){
+  cancelAnimationFrame(raf);
+  if(reducedMotion.matches){forming=false;setT(1);$('status').textContent='Concluído';saveDNA();return}
+  forming=true;
+  setT(0);
+  let start=null;
+  function tick(ts){
+    if(start===null)start=ts;
+    const progress=clamp((ts-start)/4500,0,1);
+    forming=progress<1;
+    setT(progress*progress*(3-2*progress));
+    $('status').textContent=forming?'Materializando…':'Concluído';
+    if(forming)raf=requestAnimationFrame(tick);
+    else saveDNA();
+  }
+  raf=requestAnimationFrame(tick);
+}
+function saveDNA(){try{localStorage.setItem('rai-dna-v8',JSON.stringify({now:now?.raw,old:old?.raw,t,rot,tilt,zoom,xray,seed:$('seed').value}))}catch{}}function create(raw,withMotion=true){try{const m=model(raw);if(now&&m.raw===now.raw){if(withMotion)animate();return}old=now;now=m;const differences=old?.ds.length===now.ds.length?now.ds.map((n,i)=>n!==old.ds[i]?i:-1).filter(i=>i>=0):[];changed=differences.length===1?differences[0]:-1;probe=null;update();if(withMotion)animate();else setT(1)}catch(e){$('status').textContent='Entrada inválida';$('explain').textContent=e.message}}$('create').onclick=()=>create($('seed').value);$('change').onclick=()=>{if(!now)return;let ds=now.ds.slice(),i=Math.floor(ds.length/2);ds[i]=(ds[i]+1)%10;$('seed').value=ds.join('');create($('seed').value)};$('reverse').onclick=()=>{if(!old)return;cancelAnimationFrame(raf);let temp=now;now=old;old=temp;$('seed').value=now.raw;update();animate()};document.querySelectorAll('[data-seed]').forEach(b=>b.onclick=()=>{$('seed').value=b.dataset.seed;create(b.dataset.seed)});$('seed').onkeydown=e=>{if(e.key==='Enter')create($('seed').value)};$('morph').oninput=e=>{cancelAnimationFrame(raf);forming=false;setT(+e.target.value/100);$('status').textContent='Exploração manual'};$('play').onclick=()=>{if(now)animate()};$('reset').onclick=()=>{rot=.35;tilt=.6;probe=null;zoom=1;$('zoom').value=1;refreshInspection();draw();saveDNA()};$('png').onclick=()=>{let a=document.createElement('a');a.download='dna-matematico-metamorfose.png';a.href=cv.toDataURL('image/png');a.click()};function pos(e){const r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}cv.addEventListener('pointerdown',e=>{down={...pos(e),rot,tilt,moved:false};cv.setPointerCapture(e.pointerId)});cv.addEventListener('pointermove',e=>{if(!down)return;let p=pos(e),dx=p.x-down.x,dy=p.y-down.y;if(Math.hypot(dx,dy)>8)down.moved=true;if(down.moved){rot=down.rot+dx*.008;tilt=clamp(down.tilt+dy*.008,-1.4,1.4);draw()}});cv.addEventListener('pointerup',e=>{if(!down)return;if(!down.moved){const p=pos(e);probe=visibleDigits.reduce((best,digit)=>Math.hypot(p.x-digit.x,p.y-digit.y)<(best?Math.hypot(p.x-best.x,p.y-best.y):24)?digit:best,null);refreshInspection()}down=null;saveDNA()});new ResizeObserver(()=>{let r=cv.getBoundingClientRect(),d=Math.min(Math.max(devicePixelRatio||1,2),3);cv.width=Math.round(r.width*d);cv.height=Math.round(r.height*d);ctx.setTransform(d,0,0,d,0,0);draw()}).observe(cv);try{const state=JSON.parse(localStorage.getItem('rai-dna-v8'));if(state?.now){now=model(state.now);old=state.old?model(state.old):null;rot=state.rot;tilt=state.tilt;xray=state.xray!==false;zoom=clamp(Number(state.zoom)||1,1,7);$('zoom').value=zoom;$('seed').value=state.seed;update();setT(state.t)}else create($('seed').value,false)}catch{create($('seed').value,false)}document.addEventListener('input',saveDNA);document.addEventListener('click',saveDNA);document.addEventListener('keyup',saveDNA);window.addEventListener('pagehide',saveDNA);
+const original='314159265';
+const inverted=[...original].reverse().join('');
+const prediction=()=>document.querySelector('[name="prediction"]:checked')?.value;
+document.querySelectorAll('[name="prediction"]').forEach(option=>{
+  option.onchange=()=>{$('challenge-run').disabled=false;};
+});
+function showChallengeShape(progress){
+  cancelAnimationFrame(raf);
+  forming=false;
+  old=model(original);
+  now=model(inverted);
+  probe=null;
+  $('seed').value=now.raw;
+  setT(progress);
+  update();
+  $('status').textContent=progress===0?'Original':'Invertida';
+  saveDNA();
+}
+$('challenge-run').onclick=()=>{
+  const answer=prediction();
+  if(!answer)return;
+  showChallengeShape(0);
+  animate();
+  $('challenge-before').hidden=false;
+  $('challenge-after').hidden=false;
+  const originalSum=old.sum;
+  const invertedSum=now.sum;
+  $('challenge-result').textContent=(answer==='different'?'Você previu que a forma mudaria. ':'Você previu que a forma ficaria igual. ')+
+    'Compare as duas esculturas. A soma continua '+originalSum+' → '+invertedSum+
+    ', e a ordem altera os parâmetros da forma. Use o Raio-X para investigar os algarismos.';
+};
+$('challenge-before').onclick=()=>showChallengeShape(0);
+$('challenge-after').onclick=()=>showChallengeShape(1);
+window.addEventListener('rai:seed',event=>{$('seed').value=event.detail;create(event.detail);saveDNA()})})();</script></body></html>
