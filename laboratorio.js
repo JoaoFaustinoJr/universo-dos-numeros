@@ -19,7 +19,11 @@ const graphInputs = Array.from(document.querySelectorAll('[data-coefficient]'));
 seed.value = saved.seed ?? seed.value;
 amplitude.value = saved.amplitude ?? amplitude.value;
 let validSeed = seed.value;
-let validAmplitude = +amplitude.value;
+let validAmplitude = amplitude.valueAsNumber;
+if (!Number.isFinite(validAmplitude) || validAmplitude < 0 || validAmplitude > 3) {
+  validAmplitude = 1;
+  amplitude.value = 1;
+}
 
 function save() {
   try {
@@ -192,7 +196,7 @@ const paintDNA = preview('dnaPreview', g => {
 });
 function projectWave(x, y) {
   const z = validAmplitude * Math.sin(x) * Math.cos(y);
-  return [x * 22 - y * 10, x * 2 + y * 12 - z * 20];
+  return [x * 22 - y * 10, x * 2 + y * 9 - z * 25];
 }
 
 const paintWave = preview('wavePreview', g => {
@@ -242,11 +246,15 @@ seed.oninput = () => {
   save(); paintDNA();
 };
 seed.onblur = () => { seed.value = validSeed; };
-amplitude.oninput = () => {
-  if (amplitude.value === '' || !amplitude.validity.valid) return;
-  validAmplitude = +amplitude.value;
-  save(); paintWave();
-};
+function updateAmplitude() {
+  const value = amplitude.valueAsNumber;
+  if (!Number.isFinite(value)) return;
+  validAmplitude = Math.min(3, Math.max(0, value));
+  save();
+  paintWave();
+}
+amplitude.addEventListener('input', updateAmplitude);
+amplitude.addEventListener('change', updateAmplitude);
 amplitude.onblur = () => { amplitude.value = validAmplitude; };
 graphInputs.forEach(input => {
   const coefficient = byId(input.dataset.coefficient);
