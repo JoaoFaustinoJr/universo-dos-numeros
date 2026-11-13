@@ -106,6 +106,7 @@ function render() {
   graphInputs.forEach(input => { if (input !== document.activeElement) input.value = byId(input.dataset.coefficient).value; });
   byId('homeEquation').textContent = equationText(a, b, c);
   const fn = x => a * x * x + b * x + c;
+  byId('graph-calculation').textContent = equationText(a,b,c) + ' · Para x = 2, y = (' + fmt(a) + ') × 2² + (' + fmt(b) + ') × 2 + (' + fmt(c) + ') = ' + fmt(fn(2)) + '.';
   const roots = realRoots(a, b, c);
   const equation = equationText(a, b, c);
   coefficients.forEach(input => byId(input.id + 'Val').textContent = fmt(+input.value));

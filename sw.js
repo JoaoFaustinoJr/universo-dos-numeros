@@ -1,5 +1,5 @@
 const cachePrefix = 'universo-numeros:' + self.registration.scope + ':';
-const cacheName = cachePrefix + '2';
+const cacheName = cachePrefix + '3';
 const files = [
   './', './index.html', './dna.html', './formas.html', './laboratorio.js',
   './dna-model.js', './pwa.js', './familia.css', './galeria.css', './titulos.css',
