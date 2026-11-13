@@ -1,8 +1,8 @@
 const cachePrefix = 'universo-numeros:' + self.registration.scope + ':';
-const cacheName = cachePrefix + '4';
+const cacheName = cachePrefix + '5';
 const files = [
-  './', './index.html', './dna.html', './formas.html', './laboratorio.js',
-  './dna-model.js', './pwa.js', './fichas.js', './familia.css', './galeria.css', './titulos.css',
+  './', './index.html', './dna.html', './formas.html', './laboratorio.js?v=5',
+  './dna-model.js', './pwa.js', './fichas.js?v=5', './familia.css', './galeria.css', './titulos.css',
   './fonts/lmromancaps10-regular.otf', './identidade/logo.css',
   './identidade/escultura.webp', './identidade/favicon.png',
   './identidade/apple-touch-icon.png', './identidade/app-192.png',
@@ -10,7 +10,7 @@ const files = [
 ];
 
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(cacheName).then(cache => cache.addAll(files)));
+  event.waitUntil(caches.open(cacheName).then(cache => cache.addAll(files)).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', event => {
   event.waitUntil(caches.keys().then(keys => Promise.all(keys
