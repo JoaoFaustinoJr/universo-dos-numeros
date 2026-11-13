@@ -17,6 +17,24 @@
       return { data:terms.join(''),result:terms.join(', ') };
     } }
   ];
+  sheets.push(
+    {title:'Ondas circulares', text:'Em z = A cos(k√(x²+y²)), A é a amplitude e k determina o espaçamento entre cristas.', fields:['A (0 a 6)','k (> 0)'], values:[1,4], target:'formas', solve:([amplitude,k])=>{
+      if(amplitude<0||amplitude>6||k<=0) throw Error('Use A entre 0 e 6 e k maior que zero.');
+      return {data:amplitude+'*cos('+k+'*sqrt(x^2+y^2))',result:'Amplitude = '+format(amplitude)+' · Distância entre cristas = '+format(2*Math.PI/k)};
+    }},
+    {title:'Parábola com vértice móvel',text:'Em y = a(x−h)²+k, o vértice é (h, k). Ao desenvolver o quadrado, obtemos b = −2ah e c = ah²+k.',fields:['a','h','k'],values:[1,2,-1],target:'grafico',solve:([a,h,k])=>{
+      if(!a) throw Error('Use a diferente de zero.');
+      const b=-2*a*h,c=a*h*h+k;
+      return {data:[a,b,c],result:'Vértice ('+format(h)+'; '+format(k)+') · b = '+format(b)+' · c = '+format(c)};
+    }},
+    {title:'Sequências com a mesma soma',text:'A soma comum reúne os dígitos. Na soma ponderada, multiplique cada dígito pela posição, começando em 1.',fields:['Sequência'],values:['1234'],target:'dna',sequence:true,solve:([sequence])=>{
+      if(!/^[0-9]{2,32}$/.test(sequence)) throw Error('Digite de 2 a 32 algarismos.');
+      const reversed=[...sequence].reverse().join('');
+      const weighted=value=>[...value].reduce((sum,digit,i)=>sum+Number(digit)*(i+1),0);
+      const sum=[...sequence].reduce((total,digit)=>total+Number(digit),0);
+      return {data:sequence,reversed,result:'Inversa: '+reversed+' · Soma comum: '+sum+' · Somas ponderadas: '+weighted(sequence)+' e '+weighted(reversed)};
+    }}
+  );
   function applyGraph(data) {
     if (data.length!==3 || data.some((n,i)=>!Number.isFinite(n)||n<+coefficients[i].min||n>+coefficients[i].max||Math.abs(n*2-Math.round(n*2))>1e-9)) {
       throw Error('O gráfico aceita a de −3 a 3, b de −8 a 8 e c de −12 a 12, em passos de 0,5.');
@@ -50,6 +68,11 @@
     "Divida 13 por 8 e depois 21 por 13. Ao avançar na sequência, a razão entre termos consecutivos se aproxima do número de ouro, cerca de 1,618."
   ]
 ];
+  notes.push(
+    ['Modelar ondulações que se espalham em anéis a partir de um ponto.','Desafio: faça aparecer mais anéis sem aumentar a altura. Mantenha A e aumente k.'],
+    ['Localizar a altura mínima ou máxima de uma parábola.','Desafio: posicione o vértice em (1; 2) e confirme no gráfico. Use valores que gerem coeficientes aceitos pelo gráfico.'],
+    ['Investigar como a posição de um algarismo influencia o resultado do DNA Matemático.','Desafio: compare 1234 e 4321. Ambas somam 10. As somas ponderadas são 30 e 20.']
+  );
   for (const [index, sheet] of sheets.entries()) {
     const [use, curiosity] = notes[index];
     const card=document.createElement('details');
@@ -58,7 +81,8 @@
     const fields=sheet.fields.map((name,i)=>{
       const label=document.createElement('label');
       const input=document.createElement('input');
-      input.type='number'; input.step='any'; input.value=sheet.values[i];
+      input.type=sheet.sequence?'text':'number'; input.step='any';
+      if(sheet.sequence){input.inputMode='numeric';input.maxLength=32;} input.value=sheet.values[i];
       input.style.width='6em';
       label.append(name+' ',input);
       card.querySelector('.tools').append(label);
@@ -70,8 +94,8 @@
     let solution;
     function update() {
       try {
-        const values=fields.map(input=>input.valueAsNumber);
-        if(!values.every(Number.isFinite)) throw Error('Preencha todos os valores.');
+        const values=fields.map(input=>sheet.sequence?input.value.trim():input.valueAsNumber);
+        if(!sheet.sequence&&!values.every(Number.isFinite)) throw Error('Preencha todos os valores.');
         solution=sheet.solve(values);
         status.textContent=solution.result;
         output.value=Array.isArray(solution.data)?solution.data.join('; '):solution.data;
@@ -92,6 +116,13 @@
         document.querySelector('[data-view="'+sheet.target+'"]').focus();
       } catch(e) { status.textContent=e.message; }
     };
+    if(sheet.sequence){
+      const reverse=document.createElement('button');
+      reverse.type='button';
+      reverse.textContent='Usar sequência invertida';
+      reverse.onclick=()=>{if(solution){fields[0].value=solution.reversed;update();}};
+      open.after(reverse);
+    }
     update();
     byId('formula-sheets').append(card);
   }
