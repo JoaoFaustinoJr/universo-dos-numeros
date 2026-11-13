@@ -1,8 +1,8 @@
 const cachePrefix = 'universo-numeros:' + self.registration.scope + ':';
-const cacheName = cachePrefix + '3';
+const cacheName = cachePrefix + '4';
 const files = [
   './', './index.html', './dna.html', './formas.html', './laboratorio.js',
-  './dna-model.js', './pwa.js', './familia.css', './galeria.css', './titulos.css',
+  './dna-model.js', './pwa.js', './fichas.js', './familia.css', './galeria.css', './titulos.css',
   './fonts/lmromancaps10-regular.otf', './identidade/logo.css',
   './identidade/escultura.webp', './identidade/favicon.png',
   './identidade/apple-touch-icon.png', './identidade/app-192.png',

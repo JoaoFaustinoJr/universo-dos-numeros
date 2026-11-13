@@ -1,7 +1,7 @@
 const byId = id => document.getElementById(id);
 const coefficients = ['a', 'b', 'c'].map(byId);
 const storageKey = 'rai-universo-2d-v1';
-const views = ['inicio', 'grafico', 'dna', 'formas'];
+const views = ['inicio', 'grafico', 'dna', 'formas', 'formulas'];
 const canvas = byId('plot');
 const ctx = canvas.getContext('2d');
 const formatter = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 3 });

@@ -23,7 +23,7 @@
   <p class="family-author">Professor João Faustino Júnior</p></div>
   <img class="family-emblem" src="identidade/escultura.webp" width="64" height="64" alt="">
 </div>
-<nav aria-label="Laboratórios"><button data-view="inicio">Início</button><button data-view="dna">DNA</button><button data-view="formas">Ondas</button><button data-view="grafico">Gráficos</button></nav><div class="app-actions"><button type="button" id="install-app">Instalar</button></div></header>
+<nav aria-label="Laboratórios"><button data-view="inicio">Início</button><button data-view="dna">DNA</button><button data-view="formas">Ondas</button><button data-view="grafico">Gráficos</button><button data-view="formulas">Fórmulas</button></nav><div class="app-actions"><button type="button" id="install-app">Instalar</button></div></header>
 <main><section id="inicio" class="feature-grid" aria-label="Experiências em destaque">
 <article class="feature"><canvas id="dnaPreview" role="img" aria-label="Escultura da sequência"></canvas><div class="feature-copy"><h2><span aria-hidden="true">φ</span> DNA Matemático</h2><div class="feature-actions"><label><span class="sr-only">Sequência</span><input id="homeSeed" type="text" inputmode="numeric" pattern="[0-9]+" maxlength="32" value="314159265"></label><button data-open="dna">Explorar <span aria-hidden="true">↗</span></button></div></div></article>
 <article class="feature waves"><canvas id="wavePreview" role="img" aria-label="Superfície da onda"></canvas><div class="feature-copy"><h2><span aria-hidden="true">λ</span> Ondas 3D</h2><div class="feature-actions"><label><span aria-hidden="true">α</span><span class="sr-only">Amplitude</span> <input id="homeAmplitude" type="number" min="0" max="3" step=".1" value="1"></label><span class="formula-text">z = α sen(x) cos(y)</span><button data-open="formas">Explorar <span aria-hidden="true">↗</span></button></div></div></article>
@@ -44,10 +44,10 @@
 <option value="1,-4,4">Raiz dupla · y = (x − 2)²</option>
 <option value="0,2,-1">Reta · y = 2x − 1</option>
 </select></label><p id="roots" aria-live="polite"></p>
-<table><caption>Tabela de valores</caption><thead><tr><th scope="col">x</th><th scope="col">x²</th><th scope="col">y</th></tr></thead><tbody id="values"></tbody></table><details style="margin:1rem 0"><summary>Fórmula que gera a imagem</summary><p id="graph-calculation"></p><p>O gráfico liga os pontos (x, y) calculados pela função. Quando y = 0, o ponto está no eixo horizontal e x é uma raiz.</p></details>
+<table><caption>Tabela de valores</caption><thead><tr><th scope="col">x</th><th scope="col">x²</th><th scope="col">y</th></tr></thead><tbody id="values"></tbody></table><details style="margin:1rem 0"><summary>Fórmula que gera a imagem</summary><label>Colar coeficientes (a; b; c) <input id="paste-coefficients" placeholder="1; -5; 6"></label><button id="apply-coefficients">Aplicar</button><p id="paste-status" role="status"></p><p id="graph-calculation"></p><p>O gráfico liga os pontos (x, y) calculados pela função. Quando y = 0, o ponto está no eixo horizontal e x é uma raiz.</p></details>
 </div></section>
 <section id="dna" hidden><iframe title="DNA Matemático — Metamorfose V8" src="dna.html"></iframe></section>
 <section id="formas" hidden><iframe title="Superfícies 3D, Fibonacci e fractais" src="formas.html"></iframe></section>
-</main>
+<section id="formulas" class="card" hidden><h2>Fórmulas</h2><p>Altere os valores, confira o cálculo e leve o resultado ao gerador.</p><div id="formula-sheets"></div></section></main>
 <footer><div class="app-actions"><button type="button" id="share-app">Compartilhar</button></div><p id="app-status" role="status"></p></footer>
-<script src="dna-model.js"></script><script src="laboratorio.js"></script><script src="pwa.js"></script></body></html>
+<script src="dna-model.js"></script><script src="laboratorio.js"></script><script src="pwa.js"></script><script src="fichas.js"></script></body></html>
