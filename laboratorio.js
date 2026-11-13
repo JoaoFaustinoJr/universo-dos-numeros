@@ -168,8 +168,11 @@ function preview(id, draw, designHeight = 240) {
     const w = target.clientWidth, h = target.clientHeight;
     if (!w || !h) return;
     const dpr = Math.min(Math.max(window.devicePixelRatio || 1, 2), 3);
-    target.width = Math.round(w * dpr);
-    target.height = Math.round(h * dpr);
+    const width = Math.round(w * dpr), height = Math.round(h * dpr);
+    if (target.width !== width) target.width = width;
+    if (target.height !== height) target.height = height;
+    context.resetTransform();
+    context.clearRect(0, 0, width, height);
     const scale = Math.min(w / 400, h / designHeight);
     context.setTransform(dpr * scale, 0, 0, dpr * scale, target.width / 2, target.height / 2);
     draw(context);
@@ -178,15 +181,20 @@ function preview(id, draw, designHeight = 240) {
   return paint;
 }
 
+let galleryPhase = 0;
 const paintDNA = preview('dnaPreview', g => {
   const shape = model(validSeed);
+  const turn = Math.sin(galleryPhase) * .23;
+  const cos = Math.cos(turn), sin = Math.sin(turn);
   for (let ring = 0; ring < 22; ring++) {
     g.beginPath();
     for (let i = 0; i <= 420; i++) {
       const angle = i / 420 * Math.PI * 2;
       const p = point(shape, ring / 21, angle);
-      const x = (p.x * .94 - p.y * .34) * 178;
-      const y = (p.y * .76 + p.x * .22 - p.z * .68) * 118;
+      const px = p.x * cos - p.y * sin;
+      const py = p.x * sin + p.y * cos;
+      const x = (px * .94 - py * .34) * 178;
+      const y = (py * .76 + px * .22 - p.z * .68) * 118;
       if (i) g.lineTo(x, y);
       else g.moveTo(x, y);
     }
@@ -195,7 +203,7 @@ const paintDNA = preview('dnaPreview', g => {
   }
 });
 function projectWave(x, y) {
-  const z = validAmplitude * Math.sin(x) * Math.cos(y);
+  const z = validAmplitude * Math.sin(x - galleryPhase) * Math.cos(y);
   return [x * 22 - y * 10, x * 2 + y * 9 - z * 25];
 }
 
@@ -266,3 +274,33 @@ graphInputs.forEach(input => {
   input.onblur = () => { input.value = coefficient.value; };
 });
 selectView('inicio');
+
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const visiblePreviews = new Map();
+const previewObserver = new IntersectionObserver(entries => {
+  for (const entry of entries) visiblePreviews.set(entry.target.id, entry.isIntersecting);
+  syncGalleryMotion();
+});
+for (const id of ['dnaPreview', 'wavePreview']) previewObserver.observe(byId(id));
+
+let galleryFrame = 0;
+let lastGalleryFrame = 0;
+function animateGallery(now) {
+  const elapsed = now - lastGalleryFrame;
+  if (elapsed >= 45) {
+    galleryPhase = (galleryPhase + Math.min(elapsed, 100) * .00065) % (2 * Math.PI);
+    if (visiblePreviews.get('dnaPreview')) paintDNA();
+    if (visiblePreviews.get('wavePreview')) paintWave();
+    lastGalleryFrame = now;
+  }
+  galleryFrame = requestAnimationFrame(animateGallery);
+}
+function syncGalleryMotion() {
+  cancelAnimationFrame(galleryFrame);
+  if (!document.hidden && !reducedMotion.matches && [...visiblePreviews.values()].some(Boolean)) {
+    lastGalleryFrame = performance.now();
+    galleryFrame = requestAnimationFrame(animateGallery);
+  }
+}
+document.addEventListener('visibilitychange', syncGalleryMotion);
+reducedMotion.addEventListener('change', syncGalleryMotion);
