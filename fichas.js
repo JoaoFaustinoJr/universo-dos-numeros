@@ -32,10 +32,29 @@
       byId('paste-status').textContent='Coeficientes aplicados.';
     } catch(e) { byId('paste-status').textContent=e.message; }
   };
-  for (const sheet of sheets) {
+  const notes = [
+  [
+    "Estimar um custo com tarifa fixa e preço por unidade, como uma corrida com bandeirada.",
+    "Troque b de 2 para −2. A reta passa a descer e continua cruzando o eixo y em c."
+  ],
+  [
+    "Modelar a altura de um objeto lançado, desprezando a resistência do ar. Uma raiz pode indicar quando ele chega ao chão.",
+    "Com a = 1 e b = −5, compare c = 6 e c = 7. O discriminante passa de 1 para −3 e a parábola deixa de cruzar o eixo x."
+  ],
+  [
+    "Estudar superfícies com curvaturas opostas em duas direções, como em modelos de coberturas.",
+    "Troque k de 1 para −1 e observe como as direções de subida e descida se invertem."
+  ],
+  [
+    "Estudar padrões de crescimento definidos pela soma de termos anteriores.",
+    "Divida 13 por 8 e depois 21 por 13. Ao avançar na sequência, a razão entre termos consecutivos se aproxima do número de ouro, cerca de 1,618."
+  ]
+];
+  for (const [index, sheet] of sheets.entries()) {
+    const [use, curiosity] = notes[index];
     const card=document.createElement('details');
     card.style.margin='1rem 0';
-    card.innerHTML='<summary>'+sheet.title+'</summary><p>'+sheet.text+'</p><div class="tools"></div><p role="status"></p><label>Entrada para o gerador <input readonly></label><div class="tools"><button type="button">Copiar</button><button type="button">Abrir no gerador</button></div>';
+    card.innerHTML='<summary>'+sheet.title+'</summary><p><strong>O que é</strong> · '+sheet.text+'</p><p><strong>Para que serve</strong> · '+use+'</p><p><strong>Curiosidade</strong> · '+curiosity+'</p><div class="tools"></div><p role="status"></p><label>Entrada para o gerador <input readonly></label><div class="tools"><button type="button">Copiar</button><button type="button">Abrir no gerador</button></div>';
     const fields=sheet.fields.map((name,i)=>{
       const label=document.createElement('label');
       const input=document.createElement('input');
